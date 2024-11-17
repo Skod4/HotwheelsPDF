@@ -31,6 +31,8 @@ jobs:
         path: dist/HotwheelsPDF.exe
         retention-days: 90
         if-no-files-found: error
+        compression-level: 0  # No compression for binary files
+        overwrite: true
 
   build-macos:
     runs-on: macos-latest
@@ -49,6 +51,8 @@ jobs:
     - name: Create DMG
       run: |
         cd dist
+        mkdir -p HotwheelsPDF.app/Contents/MacOS/
+        mv HotwheelsPDF HotwheelsPDF.app/Contents/MacOS/
         hdiutil create -volname "HotwheelsPDF" -srcfolder HotwheelsPDF.app -ov -format UDZO HotwheelsPDF.dmg
     - name: Upload Mac Build
       uses: actions/upload-artifact@v4
@@ -57,3 +61,5 @@ jobs:
         path: dist/HotwheelsPDF.dmg
         retention-days: 90
         if-no-files-found: error
+        compression-level: 0  # No compression for binary files
+        overwrite: true
