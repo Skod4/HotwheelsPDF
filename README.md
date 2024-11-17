@@ -17,12 +17,28 @@ A Hot Rod themed PDF manipulation tool with a flame-inspired interface! 🔥
 2. Download the latest `HotwheelsPDF-Windows.exe`
 3. Double-click the downloaded file to run the application
 
+Note: When running for the first time, Windows might show a SmartScreen warning. This happens because the app is new and not yet widely distributed. To run anyway:
+1. Click "More info"
+2. Click "Run anyway"
+3. You only need to do this once
+
 ### Mac Users
 1. Go to the [Releases](https://github.com/Skod4/HotwheelsPDF/releases) page
 2. Download the latest `HotwheelsPDF-Mac.dmg`
 3. Double-click the downloaded file
 4. Drag HotwheelsPDF to your Applications folder
-5. Open HotwheelsPDF from your Applications
+5. First time running only:
+   - Right-click (or Control-click) HotwheelsPDF in Applications
+   - Select "Open" from the menu
+   - Click "Open" in the security dialog
+   - This step is only needed the first time you run the app
+6. After first run, you can open normally by double-clicking
+
+Note: If you see a message that the app "cannot be opened because it is from an unidentified developer":
+1. Open System Preferences > Security & Privacy
+2. Click the lock icon to make changes
+3. Click "Open Anyway" next to the message about HotwheelsPDF
+4. Follow the first-time running instructions above
 
 ## For Developers (From Source)
 
