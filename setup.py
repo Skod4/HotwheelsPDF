@@ -22,7 +22,7 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     keywords="pdf, merge, split, rotate, hot rod, flames",
-    url="https://github.com/yourusername/HotwheelsPDF",
+    url="https://github.com/Skod4/HotwheelsPDF",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: End Users/Desktop",
