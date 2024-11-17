@@ -1,6 +1,6 @@
 # HotwheelsPDF
 
-A Hot Rod themed PDF manipulation tool with a flame-inspired interface! 🔥
+🔥
 
 ## Features
 
