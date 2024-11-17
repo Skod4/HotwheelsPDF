@@ -6,60 +6,78 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Build executable
-      run: python build_executable.py
-    - name: Upload Windows Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: HotwheelsPDF-Windows
-        path: dist/HotwheelsPDF.exe
-        retention-days: 90
-        if-no-files-found: error
-        compression-level: 0  # No compression for binary files
-        overwrite: true
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build executable
+        run: python build_executable.py
+      - name: Upload Windows Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: HotwheelsPDF-Windows
+          path: dist/HotwheelsPDF.exe
+          retention-days: 90
+          if-no-files-found: error
+          compression-level: 0
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: dist/HotwheelsPDF.exe
+          asset_name: HotwheelsPDF-Windows.exe
+          asset_content_type: application/octet-stream
 
   build-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Build executable
-      run: python build_executable.py
-    - name: Create DMG
-      run: |
-        cd dist
-        mkdir -p HotwheelsPDF.app/Contents/MacOS/
-        mv HotwheelsPDF HotwheelsPDF.app/Contents/MacOS/
-        hdiutil create -volname "HotwheelsPDF" -srcfolder HotwheelsPDF.app -ov -format UDZO HotwheelsPDF.dmg
-    - name: Upload Mac Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: HotwheelsPDF-Mac
-        path: dist/HotwheelsPDF.dmg
-        retention-days: 90
-        if-no-files-found: error
-        compression-level: 0  # No compression for binary files
-        overwrite: true
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build executable
+        run: python build_executable.py
+      - name: Create DMG
+        run: |
+          cd dist
+          mkdir -p HotwheelsPDF.app/Contents/MacOS/
+          mv HotwheelsPDF HotwheelsPDF.app/Contents/MacOS/
+          hdiutil create -volname "HotwheelsPDF" -srcfolder HotwheelsPDF.app -ov -format UDZO HotwheelsPDF.dmg
+      - name: Upload Mac Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: HotwheelsPDF-Mac
+          path: dist/HotwheelsPDF.dmg
+          retention-days: 90
+          if-no-files-found: error
+          compression-level: 0
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: dist/HotwheelsPDF.dmg
+          asset_name: HotwheelsPDF-Mac.dmg
+          asset_content_type: application/x-apple-diskimage
