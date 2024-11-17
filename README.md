@@ -7,7 +7,6 @@
 - Split PDF files into individual pages
 - Merge multiple PDFs into a single document
 - Rotate PDF pages with live preview
-- Hot Rod themed interface with dynamic flame effects
 - Cross-platform support (Windows, macOS)
 
 ## Easy Installation (No Python Required)
