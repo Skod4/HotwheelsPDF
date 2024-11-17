@@ -26,7 +26,7 @@ hotwheelspdf
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/HotwheelsPDF.git
+git clone https://github.com/Skod4/HotwheelsPDF.git
 cd HotwheelsPDF
 
 # Install dependencies
