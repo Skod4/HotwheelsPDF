@@ -9,9 +9,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     - name: Install dependencies
@@ -21,7 +21,7 @@ jobs:
     - name: Build executable
       run: python build_executable.py
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: HotwheelsPDF-Windows
         path: dist/HotwheelsPDF.exe
@@ -29,9 +29,9 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     - name: Install dependencies
@@ -45,7 +45,7 @@ jobs:
         cd dist
         hdiutil create -volname "HotwheelsPDF" -srcfolder HotwheelsPDF.app -ov -format UDZO HotwheelsPDF.dmg
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: HotwheelsPDF-Mac
         path: dist/HotwheelsPDF.dmg
