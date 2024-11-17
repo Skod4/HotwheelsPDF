@@ -32,8 +32,28 @@ def convert_to_icns(png_path):
         os.system(f"iconutil -c icns {iconset_name} -o {icns_path}")
         
         if os.path.exists(icns_path):
-            with open(icns_path, 'rb') as f:
-                return icns_path
+            return icns_path
+    return None
+
+def convert_to_ico(png_path):
+    """Convert PNG to ICO for Windows."""
+    if not os.path.exists(png_path):
+        return None
+    
+    # Create a temporary directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Load the image and convert to RGBA
+        img = Image.open(png_path).convert('RGBA')
+        
+        # Create ICO file with multiple sizes
+        sizes = [(16,16), (32,32), (48,48), (64,64), (128,128), (256,256)]
+        ico_path = os.path.join(temp_dir, "icon.ico")
+        
+        # Create resized versions
+        img.save(ico_path, format='ICO', sizes=sizes)
+        
+        if os.path.exists(ico_path):
+            return ico_path
     return None
 
 def build():
@@ -44,11 +64,16 @@ def build():
     # Platform-specific settings
     path_sep = ';' if platform.system() == 'Windows' else ':'
     
-    # Convert icon for macOS if needed
+    # Convert icon based on platform
     if platform.system() == 'Darwin':
-        icns_path = convert_to_icns(icon_path)
-        if icns_path:
-            icon_path = icns_path
+        converted_icon = convert_to_icns(icon_path)
+    elif platform.system() == 'Windows':
+        converted_icon = convert_to_ico(icon_path)
+    else:
+        converted_icon = None
+    
+    # Use converted icon if available, otherwise use original
+    icon_arg = converted_icon if converted_icon else icon_path
     
     PyInstaller.__main__.run([
         'run.py',
@@ -56,7 +81,7 @@ def build():
         '--onefile',
         '--windowed',
         f'--add-data={images_dir}{path_sep}images',
-        f'--icon={icon_path}',
+        f'--icon={icon_arg}',
         '--clean',
     ])
 
