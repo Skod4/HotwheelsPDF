@@ -5,6 +5,10 @@ on:
     types: [created]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -20,11 +24,13 @@ jobs:
         pip install -r requirements.txt
     - name: Build executable
       run: python build_executable.py
-    - name: Upload artifact
+    - name: Upload Windows Build
       uses: actions/upload-artifact@v4
       with:
         name: HotwheelsPDF-Windows
         path: dist/HotwheelsPDF.exe
+        retention-days: 90
+        if-no-files-found: error
 
   build-macos:
     runs-on: macos-latest
@@ -44,8 +50,10 @@ jobs:
       run: |
         cd dist
         hdiutil create -volname "HotwheelsPDF" -srcfolder HotwheelsPDF.app -ov -format UDZO HotwheelsPDF.dmg
-    - name: Upload artifact
+    - name: Upload Mac Build
       uses: actions/upload-artifact@v4
       with:
         name: HotwheelsPDF-Mac
         path: dist/HotwheelsPDF.dmg
+        retention-days: 90
+        if-no-files-found: error
