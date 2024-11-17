@@ -85,66 +85,89 @@ class HotwheelsPDF(QMainWindow):
 
     def setup_background(self):
         """Set up the background image"""
-        # Remove any existing background label
-        if hasattr(self, 'background_label') and self.background_label:
-            self.background_label.deleteLater()
+        try:
+            # Remove any existing background label
+            if hasattr(self, 'background_label') and self.background_label:
+                self.background_label.deleteLater()
+                
+            # Create and set up the background
+            flames_path = os.path.join(os.path.dirname(__file__), 'images', 'flamesBackground01.png')
+            if not os.path.exists(flames_path):
+                print(f"Warning: Background image not found at {flames_path}")
+                return
+
+            self.background_label = QLabel(self)
+            self.background_pixmap = QPixmap(flames_path)
             
-        # Create and set up the background
-        flames_path = os.path.join(os.path.dirname(__file__), 'images', 'flamesBackground01.png')
-        self.background_label = QLabel(self)
-        self.background_pixmap = QPixmap(flames_path)
-        
-        # Set up the background label
-        self.background_label.setAttribute(Qt.WA_TransparentForMouseEvents)
-        self.background_label.setParent(self)  # Ensure it's parented to the main window
-        self.background_label.lower()  # Keep it behind other widgets
-        self.update_background()
+            if self.background_pixmap.isNull():
+                print(f"Warning: Failed to load background image from {flames_path}")
+                return
+
+            # Set up the background label
+            self.background_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+            self.background_label.setParent(self)  # Ensure it's parented to the main window
+            self.background_label.lower()  # Keep it behind other widgets
+            self.update_background()
+        except Exception as e:
+            print(f"Error setting up background: {str(e)}")
 
     def update_background(self):
         """Update the background size and position"""
-        if not hasattr(self, 'background_label') or not self.background_label:
-            return
+        try:
+            if not hasattr(self, 'background_label') or not self.background_label:
+                return
 
-        if not self.background_label.parent() is self:
-            # If parent is wrong, recreate the background
-            self.setup_background()
-            return
+            if not self.background_label.parent() is self:
+                # If parent is wrong, recreate the background
+                self.setup_background()
+                return
 
-        # Calculate target height (half of window height)
-        target_height = self.height() // 2
-        
-        # Calculate the width needed to maintain aspect ratio
-        aspect_ratio = self.background_pixmap.width() / self.background_pixmap.height()
-        target_width = int(target_height * aspect_ratio)
-        
-        # If target width is less than window width, scale based on width instead
-        if target_width < self.width():
-            target_width = self.width()
-            target_height = int(target_width / aspect_ratio)
-        
-        # Scale the pixmap
-        scaled_pixmap = self.background_pixmap.scaled(
-            target_width,
-            target_height,
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        )
-        
-        # Calculate x position to center horizontally if wider than window
-        x_position = (self.width() - scaled_pixmap.width()) // 2
-        
-        # Set the pixmap and position
-        self.background_label.setPixmap(scaled_pixmap)
-        self.background_label.setGeometry(
-            x_position,
-            self.height() - scaled_pixmap.height(),
-            scaled_pixmap.width(),
-            scaled_pixmap.height()
-        )
-        
-        # Ensure it stays behind other widgets
-        self.background_label.lower()
-        self.background_label.show()
+            if not hasattr(self, 'background_pixmap') or self.background_pixmap.isNull():
+                return
+
+            # Get dimensions, ensuring they're not zero
+            pixmap_width = max(1, self.background_pixmap.width())
+            pixmap_height = max(1, self.background_pixmap.height())
+            window_width = max(1, self.width())
+            window_height = max(1, self.height())
+
+            # Calculate target height (half of window height)
+            target_height = window_height // 2
+            
+            # Calculate the width needed to maintain aspect ratio
+            aspect_ratio = pixmap_width / pixmap_height
+            target_width = int(target_height * aspect_ratio)
+            
+            # If target width is less than window width, scale based on width instead
+            if target_width < window_width:
+                target_width = window_width
+                target_height = int(target_width / aspect_ratio)
+            
+            # Scale the pixmap
+            scaled_pixmap = self.background_pixmap.scaled(
+                target_width,
+                target_height,
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+            )
+            
+            # Calculate x position to center horizontally if wider than window
+            x_position = (window_width - scaled_pixmap.width()) // 2
+            
+            # Set the pixmap and position
+            self.background_label.setPixmap(scaled_pixmap)
+            self.background_label.setGeometry(
+                x_position,
+                window_height - scaled_pixmap.height(),
+                scaled_pixmap.width(),
+                scaled_pixmap.height()
+            )
+            
+            # Ensure it stays behind other widgets
+            self.background_label.lower()
+            self.background_label.show()
+        except Exception as e:
+            print(f"Error updating background: {str(e)}")
 
     def resizeEvent(self, event):
         """Handle window resize events"""
