@@ -9,6 +9,16 @@ from .screens.merge_screen import MergeScreen
 from .screens.rotate_screen import RotateScreen
 from .utils.settings import Settings
 
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class HotwheelsPDF(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -30,7 +40,7 @@ class HotwheelsPDF(QMainWindow):
 
         # Add logo at the top
         logo_label = QLabel()
-        logo_path = os.path.join(os.path.dirname(__file__), 'images', 'LogoBackground01.png')
+        logo_path = resource_path(os.path.join('images', 'LogoBackground01.png'))
         logo_pixmap = QPixmap(logo_path)
         scaled_logo = logo_pixmap.scaled(265, 132, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(scaled_logo)
@@ -91,7 +101,7 @@ class HotwheelsPDF(QMainWindow):
                 self.background_label.deleteLater()
                 
             # Create and set up the background
-            flames_path = os.path.join(os.path.dirname(__file__), 'images', 'flamesBackground01.png')
+            flames_path = resource_path(os.path.join('images', 'flamesBackground01.png'))
             if not os.path.exists(flames_path):
                 print(f"Warning: Background image not found at {flames_path}")
                 return

@@ -58,7 +58,7 @@ def convert_to_ico(png_path, workpath):
 def build():
     # Get the directory containing images
     images_dir = os.path.join('hotwheelspdf', 'images')
-    icon_path = os.path.join('hotwheelspdf', 'images', 'LogoBackground01.png')
+    icon_path = os.path.join(images_dir, 'LogoBackground01.png')
     
     # Create a work directory that won't be deleted
     work_dir = os.path.join(os.getcwd(), 'build', 'icon_work')
@@ -78,16 +78,32 @@ def build():
     # Use converted icon if available, otherwise use original
     icon_arg = converted_icon if converted_icon else icon_path
     
-    PyInstaller.__main__.run([
+    # Collect all data files
+    data_files = [
+        (images_dir, 'images'),  # This will put all images in an 'images' folder in the executable
+    ]
+    
+    # Build the data args
+    data_args = [f'--add-data={src}{path_sep}{dst}' for src, dst in data_files]
+    
+    # Basic PyInstaller arguments
+    args = [
         'run.py',
         '--name=HotwheelsPDF',
         '--onefile',
         '--windowed',
-        f'--add-data={images_dir}{path_sep}images',
         f'--icon={icon_arg}',
         '--clean',
-        f'--workpath={work_dir}'
-    ])
+        f'--workpath={work_dir}',
+        '--noconfirm',  # Skip the confirmation prompt
+        '--log-level=INFO',  # More detailed logging
+    ]
+    
+    # Add data arguments
+    args.extend(data_args)
+    
+    print("Building with arguments:", args)
+    PyInstaller.__main__.run(args)
 
 if __name__ == '__main__':
     build()
